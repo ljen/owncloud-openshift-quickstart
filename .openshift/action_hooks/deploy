@@ -49,4 +49,14 @@ else
   fi
 fi
 
+if [ -f "${dest_dir}/.htaccess" ]; then
+  echo "adding HSTS headers to .htaccess"
+  cat "# Force https" >> ${dest_dir}/.htaccess 
+  cat "RewriteEngine on " >> ${dest_dir}/.htaccess 
+  cat "RewriteCond %{HTTP:X-Forwarded-Proto} !https " >> ${dest_dir}/.htaccess 
+  cat "RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R,L]" >> ${dest_dir}/.htaccess 
+  cat "# Add HSTS header" >> ${dest_dir}/.htaccess 
+  cat "Header set Strict-Transport-Security \"max-age=31536000\"" >> ${dest_dir}/.htaccess 
+fi
+
 echo "Completed deploy."
